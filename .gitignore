@@ -82,7 +82,6 @@ hs_err_pid*
 .springBeans
 /build
 /code
-MANIFEST.MF
 _site/
 activemq-data
 bin
