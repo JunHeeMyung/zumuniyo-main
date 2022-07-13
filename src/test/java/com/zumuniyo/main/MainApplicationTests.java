@@ -1,10 +1,10 @@
-package com.zumuniyo.zumuniyoProject;
+package com.zumuniyo.main;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ZumuniyoProjectApplicationTests {
+class MainApplicationTests {
 
 	@Test
 	void contextLoads() {
