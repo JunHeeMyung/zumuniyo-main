@@ -18,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name="order")
+@Table(name="zorder")
 @Entity
 @Builder
 @EqualsAndHashCode(of = "orderSeq")
@@ -34,7 +34,7 @@ public class OrderDTO {
 	private int count;
 
 	@ManyToOne
-	private Long orderGroupSeq;
+	private OrderDTO order;
 	
 	
 }

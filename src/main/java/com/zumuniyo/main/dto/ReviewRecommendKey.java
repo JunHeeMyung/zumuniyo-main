@@ -15,6 +15,7 @@ public class ReviewRecommendKey implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private MemberDTO member;
+	
 	private ReviewDTO review;
 	
 }

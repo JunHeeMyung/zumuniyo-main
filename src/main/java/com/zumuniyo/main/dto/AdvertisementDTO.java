@@ -33,10 +33,10 @@ public class AdvertisementDTO {
 	
 	private String image;
 	
-	private Timestamp start;
-	private Timestamp end;
+	private Timestamp startTime;
+	private Timestamp endTime;
 	
-	private int view;
-	private int click;
+	private int viewCount;
+	private int clickCount;
 	
 }

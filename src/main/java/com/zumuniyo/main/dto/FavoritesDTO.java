@@ -1,8 +1,8 @@
 package com.zumuniyo.main.dto;
 
+
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -18,13 +18,9 @@ import lombok.ToString;
 @Table(name="favorites")
 @Entity
 @Builder
-@IdClass(FavoritesKey.class)
 public class FavoritesDTO {
 
-	@Id
-	private MemberDTO member;
-	
-	@Id
-	private ShopDTO shop;
+	@EmbeddedId
+	FavoritesKey favoriteId;
 	
 }
