@@ -34,7 +34,6 @@ public class OrderDTO {
 	private int count;
 
 	@ManyToOne
-	private OrderDTO order;
-	
+	private OrderGroupDTO orderGroup;
 	
 }
