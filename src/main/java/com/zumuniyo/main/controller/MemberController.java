@@ -28,7 +28,7 @@ public class MemberController {
 		log.info("test");
 		
 		List<MemberDTO> memberList = (List<MemberDTO>) memberRepository.findAll();
-		
+		System.out.println("test");
 		return memberList;
 	}
 
