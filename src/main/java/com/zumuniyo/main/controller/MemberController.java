@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zumuniyo.main.dto.MemberDTO;
 import com.zumuniyo.main.repository.MemberRepository;
 
+import lombok.extern.java.Log;
+
+@Log
 @CrossOrigin
 @RestController
 @RequestMapping("/member/*")
@@ -22,8 +25,10 @@ public class MemberController {
 	@GetMapping("/test")
 	public List<MemberDTO> hello() {
 		
-		List<MemberDTO> memberList = (List<MemberDTO>) memberRepository.findAll();
+		log.info("test");
 		
+		List<MemberDTO> memberList = (List<MemberDTO>) memberRepository.findAll();
+		System.out.println("test");
 		return memberList;
 	}
 
