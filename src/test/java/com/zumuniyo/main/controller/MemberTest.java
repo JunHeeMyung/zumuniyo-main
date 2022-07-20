@@ -11,7 +11,7 @@ import com.zumuniyo.main.repository.MemberRepository;
 
 
 @SpringBootTest
-public class MemberController2 {
+public class MemberTest {
 	
 	@Autowired
 	MemberRepository memberRepository;
