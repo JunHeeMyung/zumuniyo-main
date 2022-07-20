@@ -19,6 +19,8 @@
 	</properties>
 	<dependencies>
 
+	
+
 		<!-- Qdomain -->
 		<dependency>
 			<groupId>com.querydsl</groupId>
