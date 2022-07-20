@@ -1,4 +1,4 @@
-package com.zumuniyo.main;
+package com.zumuniyo.main.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import com.zumuniyo.main.repository.MenuCategoryRepository;
 import com.zumuniyo.main.repository.MenuRepository;
 
 @SpringBootTest
-public class MenuCrudTest {
+public class MenuTest {
 	
 	
 	@Autowired

@@ -3,8 +3,8 @@ package com.zumuniyo.main.repository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.zumuniyo.main.dto.MenuDTO;
+import com.zumuniyo.main.dto.LocationDTO;
 
-public interface MenuRepository extends QuerydslPredicateExecutor<MenuDTO>,PagingAndSortingRepository<MenuDTO, Long>{
+public interface LocationRepository extends QuerydslPredicateExecutor<LocationDTO>,PagingAndSortingRepository<LocationDTO, String>{
 
 }
