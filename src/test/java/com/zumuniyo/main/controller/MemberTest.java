@@ -19,11 +19,15 @@ public class MemberTest {
 	@Test
 	public void register() {
 		
+		
+		
+		
 		MemberDTO m = MemberDTO.builder().memEmail("test@naver.com").memType(Memtype.일반회원).build();
 		
 		System.out.println("입력이메일:"+m.getMemEmail());
 		
 		memberRepository.findByMemEmailAndSocialType(m.getMemEmail(), "kakao")
+		
 					.ifPresentOrElse(_member->{
 							System.out.println(_member);
 							System.out.println("이미 존재하는 아이디입니다");
@@ -40,6 +44,7 @@ public class MemberTest {
 						});
 		return;
 	}
+	
 	
 
 }
