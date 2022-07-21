@@ -1,16 +1,11 @@
 package com.zumuniyo.main.controller;
 
-import java.awt.Menu;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import com.zumuniyo.main.dto.MenuCategoryDTO;
 import com.zumuniyo.main.dto.MenuDTO;
@@ -42,10 +37,7 @@ public class MenuTest {
 		//Long categoryDefault = menuCategoryRepository.findByMenuCategoryName("카테고리없음");
 		
 		menuCategoryRepository.findById(cno).ifPresent(mc->{
-			//menuRepository.findByMenuCategory(mc).forEach(System.out::println);
-			
-			List<MenuDTO> menulist = menuRepository.findByMenuCategory(mc);
-			System.out.println(menulist);
+			menuRepository.findByMenuCategory(mc).forEach(System.out::println);
 			
 			//mc.setMenuCategorySeq(categoryDefault);
 			
