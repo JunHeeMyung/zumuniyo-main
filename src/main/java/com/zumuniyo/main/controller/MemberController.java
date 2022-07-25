@@ -38,7 +38,7 @@ public class MemberController {
 							HttpServletRequest request) {
 		
 		/* 입력검증 */
-		if(memEmail.equals("")||memEmail.equals("")) return "입력값없음";
+		if(memEmail.equals("")||memToken.equals("")) return "입력값없음";
 		
 		/* 요청검증 */
 		String token = memToken; // 네이버 로그인 접근 토큰;
