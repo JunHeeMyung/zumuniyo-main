@@ -3,11 +3,15 @@ package com.zumuniyo.main.dto;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,8 +52,10 @@ public class NoticeBoardDTO {
 	private String content;
 	
 	@ElementCollection(targetClass=String.class)
-	private List<String> images;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "noticeNo") 
+	private List<NoticeAttachment> images;	
 	
 	private boolean boardTop;
-
+	 
 }
