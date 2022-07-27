@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class MemberController {
 		loginResult = "";
 		
 		/* 입력검증 */
-		if(memEmail.equals("")||memToken.equals("")) return "입력값없음";
+		if(memEmail==null||memToken==null||memEmail.equals("")||memToken.equals("")) return "입력값없음";
 		
 		/* 받은 토큰으로 이메일 검증 */
 		String token = memToken; // 네이버 로그인 접근 토큰;
