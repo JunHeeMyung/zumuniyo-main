@@ -108,7 +108,9 @@ public class ReviewController {
 		
 //		String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
 //		String testPath = "C:/MSA/3Project/zumuniyo-main/src/main/resources/img";
-		String testPath = "C:/MSA/reacttest/forreact/public";
+		
+	//	String testPath = "C:/MSA/reacttest/forreact/public";
+		String testPath = "C:/MSA/3Project/zumuniyo-react/public";
 		
 		System.out.println(file);
 		String rootPath = testPath;
