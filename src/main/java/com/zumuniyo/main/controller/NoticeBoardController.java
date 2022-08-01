@@ -9,7 +9,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import com.zumuniyo.main.dto.NoticeBoardDTO;
 import com.zumuniyo.main.dto.PageMaker;
 import com.zumuniyo.main.dto.PageVO;
 import com.zumuniyo.main.repository.NoticeBoardRepository;
+import com.zumuniyo.main.repository.NoticeBoardService;
 
 import lombok.extern.java.Log;
 @Log
@@ -36,9 +39,40 @@ public class NoticeBoardController {
 	@Autowired
 	NoticeBoardRepository boardRepo;
 	
+	@Autowired
+	NoticeBoardService service;
+	
+	@PostMapping("/NoticeUpdate.do")
+	public String modifyPost(PageVO pageVO, @RequestBody NoticeBoardDTO board) {
+		System.out.println("보드입니다:"+board);
+		boardRepo.findById(board.getNoticeBoardSeq()).ifPresentOrElse(original->{
+			original.setContent(board.getContent());
+			original.setTitle(board.getTitle());
+			NoticeBoardDTO updateBoard = boardRepo.save(original);
+		}, ()->{System.out.println("수정할 데이터없음");});
+		
+		return "수정완료";
+		
+	}
+	
+	@Transactional
+	@DeleteMapping("/NoticeDelete.do/{boardSeq}")
+	public String delete(@PathVariable Long boardSeq )
+								{
+		
+		boardRepo.findById(boardSeq).ifPresent(re->{
+			boardRepo.delete(re);
+		});
+		return "수정완료";
+	}
+
+
+	
 	
 	@GetMapping("/Noticedetail.do/{boardSeq}")
 	public NoticeBoardDTO boardDetail(@PathVariable Long boardSeq){
+			
+		service.updateView(boardSeq);
 		
 		return boardRepo.findById(boardSeq).get(); 
 	}
@@ -69,11 +103,16 @@ public class NoticeBoardController {
 		
 		System.out.println("pageVO:" + pageVO);
 		
-		Pageable page = pageVO.makePaging(0, "noticeBoardSeq"); //direction
+		Pageable page = pageVO.makePaging(0, new String[]{"boardTop", "noticeBoardSeq"}); //direction
 		Predicate predicate = 
 				boardRepo.makePredicate(pageVO.getType(), pageVO.getKeyword());
 		
+		
 		Page<NoticeBoardDTO> blist =  boardRepo.findAll(predicate, page);
+		
+		
+		
+		
 		PageMaker<NoticeBoardDTO> pgmaker = new PageMaker<>(blist);
 		
 		

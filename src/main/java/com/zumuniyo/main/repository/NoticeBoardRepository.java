@@ -1,9 +1,12 @@
 package com.zumuniyo.main.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -14,8 +17,8 @@ public interface NoticeBoardRepository extends QuerydslPredicateExecutor<NoticeB
 
 	  @Modifying    
 	  @Query
-	  (value ="update noticeboard p set p.hitCount = p.hitCount + 1 where p.id = :id" ,  nativeQuery = true)    
-	  int updateHitCount(Long id);
+	  (value ="update noticeboard p set p.hit_Count = p.hit_Count + 1 where p.notice_Board_Seq = ?1" ,  nativeQuery = true)    
+	  int updateHitCount(@Param("noticeBoardSeq")Long NoticeBoardDTO);
 
 	  public default Predicate makePredicate(String type, String keyword) {
 			 BooleanBuilder builder = new BooleanBuilder();
@@ -32,7 +35,11 @@ public interface NoticeBoardRepository extends QuerydslPredicateExecutor<NoticeB
 			 return builder;
 			 }
 	  
-	  
+//		SELECT *
+//		FROM  NoticeBoard
+//		ORDER BY DECODE(boardTop, '1', 1), noticeBoardSeq ASC;
+//	  @Query(value = "select * from NoticeBoard order by decode(boardTop,'1',1) noticeBoardSeq ASC",nativeQuery =true)
+//	  List<NoticeBoardDTO> findAllByOrderByBorderTopAsc();
 
 
 }
