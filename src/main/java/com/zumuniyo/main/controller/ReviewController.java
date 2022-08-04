@@ -44,8 +44,7 @@ public class ReviewController {
 //	
 //	@Autowired
 //	MenuRepository menuRepo;
-
-//	ReviewDTO upReview = ReviewDTO.builder().build();
+	
 	List<String> imgs = new ArrayList<>();
 
 	@GetMapping("/reviewTest")
@@ -145,29 +144,21 @@ public class ReviewController {
 			System.out.println("불일치");
 			return "fail";
 		}
-
 	}
 
-	// @GetMapping("/upload")
-	// public void reviewImg(String aa) throws Exception {
-//	@CrossOrigin(origins = {"http://localhost:3000"})	
+
 	@PostMapping("/upload")
-//	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
 	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
 		System.out.println("요청들어옴");
 //		String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
 		
 		System.out.println(file);
-		String rootPath = "C:/MSA/3Project/zumuniyo-react/public";		
+		String rootPath = "C:/MSA/3Project/zumuniyo-react/public";
 		String basePath = rootPath + "/" + "img";
 		String filePath = basePath + "/" + file.getOriginalFilename();
 		File dest = new File(filePath);
 		
-		file.transferTo(dest); // 파일 업로드 작업 수행
-		
+		file.transferTo(dest); // 파일 업로드 작업 수행		
 		imgs.add(filePath);
-
 	}
-
-
 }
