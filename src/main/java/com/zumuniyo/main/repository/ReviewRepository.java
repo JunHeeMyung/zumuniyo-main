@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.zumuniyo.main.dto.MemberDTO;
 import com.zumuniyo.main.dto.ReviewDTO;
 
 public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,PagingAndSortingRepository<ReviewDTO, Long>{
@@ -35,6 +34,17 @@ public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,P
 			+ "where menu_seq = ?1\r\n"
 			+ "order by review_seq desc", nativeQuery = true)
 	List<ReviewDTO> selectAllBymenu(Long bno);
+	
+	
+	//매장의 추천리뷰
+	@Query(value="select review.* from review \r\n"
+			+ "join ordergroup on(review.order_group_order_group_seq = ordergroup.order_group_seq) \r\n"
+			+ "join shop on (shop.shop_seq = ordergroup.shop_shop_seq ) \r\n"
+			+ "where shop_shop_seq = ?1 and review.review_exposure =1\r\n"
+			+ "order by review_seq desc;", nativeQuery = true)
+	List<ReviewDTO> selectByShopExposure(Long bno);
+	
+	
 	
 	
 	//샵의 리뷰 평균별점

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,31 +44,28 @@ public class ReviewController {
 
 	@Autowired
 	MemberRepository memRepo;
-	
+
 	@Autowired
 	OrderGroupRepository orderGRepo;
 
 	@Autowired
-	ShopRepository shopRepo;	
+	ShopRepository shopRepo;
 //	
 //	@Autowired
 //	MenuRepository menuRepo;
+	
+	@Autowired
+	OrderGroupRepository orderRepo;
 
 	List<String> imgs = new ArrayList<>();
 
-	
-	
-	
-	//테스트용 메시지
+	// 테스트용 메시지
 	@GetMapping("/reviewTest")
 	public String reviewTest() {
 		return "도착";
 	}
 
-	
-	
-	
-	//전체조회
+	// 전체조회
 	@GetMapping("/reviewList")
 	public List<ReviewDTO> reviewList() {
 		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo
@@ -75,9 +73,9 @@ public class ReviewController {
 		return reviewList;
 	}
 
-	//나의 리뷰 조회
+	// 나의 리뷰 조회
 	@GetMapping("/reviewMemList")
-	public List<ReviewDTO> reviewMemList(HttpServletRequest request) {		
+	public List<ReviewDTO> reviewMemList(HttpServletRequest request) {
 		List<ReviewDTO> reviewList = new ArrayList<>();
 		if (request.getSession().getAttribute("member") != null) {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
@@ -87,39 +85,47 @@ public class ReviewController {
 		return reviewList;
 	}
 
-	//샵의 리뷰 조회
+	// 샵의 리뷰 조회
 	@GetMapping("/reviewShopList/{shopseq}")
-	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {		
+	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {
 		System.out.println("shopseq :" + shopseq);
 		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShop(shopseq);
-		System.out.println("reviewList :" +reviewList);
-		return reviewList;		
+		System.out.println("reviewList :" + reviewList);
+		return reviewList;
 	}
 	
+	// 샵의 추천리뷰 조회
+	@GetMapping("/reviewShopExposueList/{shopseq}")
+	public List<ReviewDTO> reviewByShopExposure(@PathVariable Long shopseq) {
+		System.out.println("shopseq :" + shopseq);
+		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectByShopExposure(shopseq);
+		System.out.println("reviewList :" + reviewList);
+		return reviewList;
+	}
 
-	//메뉴의 리뷰 조회
+	// 메뉴의 리뷰 조회
 	@GetMapping("/reviewMenuList/{menuseq}")
-	public List<ReviewDTO> reviewByMenu(@PathVariable Long menuseq) {		
+	public List<ReviewDTO> reviewByMenu(@PathVariable Long menuseq) {
 		System.out.println("menuseq :" + menuseq);
 		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllBymenu(menuseq);
 		return reviewList;
 	}
-		
-	
 
-	
-	
-	//리뷰 등록
-	@PostMapping("/reviewInsert")
-	public int reviewInsert(ReviewDTO review, HttpServletRequest request) {
+	// 리뷰 등록
+	@PostMapping("/reviewInsert/{orderSeq}")
+	public int reviewInsert(ReviewDTO review, @PathVariable Long orderSeq, HttpServletRequest request) {
 
 		System.out.println("리뷰등록요청");
 		if (request.getSession().getAttribute("member") != null) {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			System.out.println(mem);
+			
+			
+			
 
 			review.setMember(mem);
 			review.setReviewExposure(false);
+			review.setOrderGroup(orderRepo.findById(orderSeq).get());
 
 			if (imgs != null) {
 				System.out.println("이미지 있음");
@@ -139,20 +145,20 @@ public class ReviewController {
 		}
 	}
 
-	
-	//리뷰 업데이트
+	// 리뷰 업데이트
 	@PutMapping("/reviewUpdate/{bno}")
 	public void reviewUpdate(@PathVariable Long bno, Boolean bool) {
+		System.out.println("bno :" + bno);
+		System.out.println("bool :"+bool);
 
-		ReviewDTO reviewUpdate = reviewRepo.findById(bno).get();		
-		reviewUpdate.setReviewExposure(bool);		
+		ReviewDTO reviewUpdate = reviewRepo.findById(bno).get();
+		reviewUpdate.setReviewExposure(bool);
 		System.out.println(reviewUpdate);
 		reviewRepo.save(reviewUpdate);
 	}
 
-	
-	//리뷰 삭제(로그인한 본인 것만)
-	@DeleteMapping("/reviewDelete/{bno}")
+	// 리뷰 삭제(로그인한 본인 것만)
+	@DeleteMapping("/reviewDelete/{bno}" )
 //	public String reviewDelete(@PathVariable Long bno)	{
 	public String reviewDelete(@PathVariable Long bno, HttpServletRequest request) {
 
@@ -162,7 +168,7 @@ public class ReviewController {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			ReviewDTO reviewDelete = reviewRepo.findById(bno).get();
 
-			if (mem.getMemSeq() == reviewDelete.getMember().getMemSeq()) {
+			if (mem.getMemSeq() == reviewDelete.getMember().get("memSeq")) {
 
 				System.out.println("정보일치");
 				reviewRepo.deleteById(bno);
@@ -175,29 +181,26 @@ public class ReviewController {
 		return "fail";
 	}
 
-
-	//이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
+	// 이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
 	@PostMapping("/upload")
 	public String reviewImg(@RequestParam MultipartFile file) throws Exception {
-		System.out.println("요청들어옴");		
-		
+		System.out.println("요청들어옴");
+
 		UUID uuid = UUID.randomUUID();
-		String filename = uuid.toString()+"_"+file.getOriginalFilename();
-		
-		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";		
-		String filePath = basePath + "/" + filename;		
+		String filename = uuid.toString() + "_" + file.getOriginalFilename();
+
+		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
+		String filePath = basePath + "/" + filename;
 		File dest = new File(filePath);
 		file.transferTo(dest); // 파일 업로드 작업 수행
-		
-		//저장되는 경로를 맞춤 리액트의 public에 폴더 img		
-		String filePath2 = "img/"+ filename;		
+
+		// 저장되는 경로를 맞춤 리액트의 public에 폴더 img
+		String filePath2 = "img/" + filename;
 		imgs.add(filePath2);
 
 		return filename;
 	}
-	
-	
-	
+
 //	//이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
 //	@PostMapping("/upload")
 //	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
@@ -218,81 +221,61 @@ public class ReviewController {
 //		imgs.add(filePath2);
 //	}
 
+	// 마이페이지, 관리자등 리뷰 이외 test용
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//마이페이지, 관리자등 리뷰 이외 test용
-	
 	@PostMapping("/nickchange/{newNick}")
 	public int nickchange(@PathVariable String newNick, HttpServletRequest request) {
-		
+
 		System.out.println("newNick : " + newNick);
 		if (request.getSession().getAttribute("member") != null) {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			mem.setMemNick(newNick);
-			memRepo.save(mem);		
-			System.out.println("mem :" +mem);
+			memRepo.save(mem);
+			System.out.println("mem :" + mem);
 			return 1;
-		}	
-		return -1;		
+		}
+		return -1;
 	}
-	
+
 	@PostMapping("/memManage")
 	public String memManage(MemberDTO newMem, HttpServletRequest request) {
-		
-		if(newMem==null) {
+
+		if (newMem == null) {
 			return "입력 MemberDTO값이 없음";
 		}
-		
+
 		if (request.getSession().getAttribute("member") != null) {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			mem.setMemNick(newMem.getMemNick());
 			mem.setMemStatus(newMem.getMemStatus());
 			mem.setMemType(newMem.getMemType());
-			memRepo.save(mem);			
+			memRepo.save(mem);
 			return "성공";
-		}	
-		return "세션의 로그인 정보가 없음";		
+		}
+		return "세션의 로그인 정보가 없음";
 	}
-	
+
 	@PostMapping("/memList")
-	public List<MemberDTO> memAllList(){
-		List<MemberDTO> memList =  (List<MemberDTO>) memRepo.findAll(Sort.by(Sort.Direction.ASC, "memSeq"));
-		System.out.println("memList: "+memList);		
+	public List<MemberDTO> memAllList() {
+		List<MemberDTO> memList = (List<MemberDTO>) memRepo.findAll(Sort.by(Sort.Direction.ASC, "memSeq"));
+		System.out.println("memList: " + memList);
 		return memList;
 	}
-		
+
 	@PostMapping("/orderList")
-	public List<OrderGroupDTO> orderList(){
-		List<OrderGroupDTO> orderList =  (List<OrderGroupDTO>) orderGRepo.findAll(Sort.by(Sort.Direction.DESC, "orderGroupSeq"));
-		System.out.println("orderList: "+orderList);
-		
+	public List<OrderGroupDTO> orderList() {
+		List<OrderGroupDTO> orderList = (List<OrderGroupDTO>) orderGRepo
+				.findAll(Sort.by(Sort.Direction.DESC, "orderGroupSeq"));
+		System.out.println("orderList: " + orderList);
+
 		return orderList;
 	}
-	
-	
+
 	@PostMapping("/shopList")
-	public List<ShopDTO> shopAllList(){
-		List<ShopDTO> shopList =  (List<ShopDTO>) shopRepo.findAll(Sort.by(Sort.Direction.ASC, "shopSeq"));
-		System.out.println("memList: "+shopList);		
+	public List<ShopDTO> shopAllList() {
+		List<ShopDTO> shopList = (List<ShopDTO>) shopRepo.findAll(Sort.by(Sort.Direction.ASC, "shopSeq"));
+		System.out.println("memList: " + shopList);
 		return shopList;
 	}
-	
-	
-	
 
-	
-	
-	
-	
-	
 }
