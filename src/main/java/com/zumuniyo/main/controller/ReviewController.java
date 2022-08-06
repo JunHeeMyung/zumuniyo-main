@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.filechooser.FileSystemView;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zumuniyo.main.dto.MemberDTO;
 import com.zumuniyo.main.dto.OrderGroupDTO;
 import com.zumuniyo.main.dto.ReviewDTO;
+import com.zumuniyo.main.dto.ShopDTO;
 import com.zumuniyo.main.repository.MemberRepository;
 import com.zumuniyo.main.repository.MenuRepository;
 import com.zumuniyo.main.repository.OrderGroupRepository;
@@ -45,8 +47,8 @@ public class ReviewController {
 	@Autowired
 	OrderGroupRepository orderGRepo;
 
-//	@Autowired
-//	ShopRepository shopRepo;	
+	@Autowired
+	ShopRepository shopRepo;	
 //	
 //	@Autowired
 //	MenuRepository menuRepo;
@@ -90,6 +92,7 @@ public class ReviewController {
 	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {		
 		System.out.println("shopseq :" + shopseq);
 		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShop(shopseq);
+		System.out.println("reviewList :" +reviewList);
 		return reviewList;		
 	}
 	
@@ -110,6 +113,7 @@ public class ReviewController {
 	@PostMapping("/reviewInsert")
 	public int reviewInsert(ReviewDTO review, HttpServletRequest request) {
 
+		System.out.println("리뷰등록요청");
 		if (request.getSession().getAttribute("member") != null) {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			System.out.println(mem);
@@ -130,7 +134,8 @@ public class ReviewController {
 				return -1;
 			}
 		} else {
-			return -1;
+			imgs.clear();
+			return -2;
 		}
 	}
 
@@ -173,23 +178,45 @@ public class ReviewController {
 
 	//이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
 	@PostMapping("/upload")
-	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
-		System.out.println("요청들어옴");
-//		String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
-
-		System.out.println(file);
+	public String reviewImg(@RequestParam MultipartFile file) throws Exception {
+		System.out.println("요청들어옴");		
 		
-		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
-		String filePath = basePath + "/" + file.getOriginalFilename();
+		UUID uuid = UUID.randomUUID();
+		String filename = uuid.toString()+"_"+file.getOriginalFilename();
 		
+		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";		
+		String filePath = basePath + "/" + filename;		
 		File dest = new File(filePath);
-
 		file.transferTo(dest); // 파일 업로드 작업 수행
 		
-		//저장되는 경로를 맞춤 리액트의 public에 폴더 img
-		String filePath2 = "img/"+ file.getOriginalFilename();		
+		//저장되는 경로를 맞춤 리액트의 public에 폴더 img		
+		String filePath2 = "img/"+ filename;		
 		imgs.add(filePath2);
+
+		return filename;
 	}
+	
+	
+	
+//	//이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
+//	@PostMapping("/upload")
+//	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
+//		System.out.println("요청들어옴");
+////		String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
+//		
+//		System.out.println(file);	
+//		
+//		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
+//		String filePath = basePath + "/" + file.getOriginalFilename();
+//		
+//		File dest = new File(filePath);
+//		
+//		file.transferTo(dest); // 파일 업로드 작업 수행
+//		
+//		//저장되는 경로를 맞춤 리액트의 public에 폴더 img
+//		String filePath2 = "img/"+ file.getOriginalFilename();		
+//		imgs.add(filePath2);
+//	}
 
 
 	
@@ -253,10 +280,16 @@ public class ReviewController {
 	}
 	
 	
+	@PostMapping("/shopList")
+	public List<ShopDTO> shopAllList(){
+		List<ShopDTO> shopList =  (List<ShopDTO>) shopRepo.findAll(Sort.by(Sort.Direction.ASC, "shopSeq"));
+		System.out.println("memList: "+shopList);		
+		return shopList;
+	}
 	
 	
 	
-	
+
 	
 	
 	
