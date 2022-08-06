@@ -15,6 +15,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +47,7 @@ public class ShopDTO {
 	private String shopAddrDetail;
 	
 	@ManyToOne
+	@JsonIgnore
 	private MemberDTO member;
 	
 	@Enumerated(EnumType.STRING)
@@ -63,5 +67,10 @@ public class ShopDTO {
 	
 	@Enumerated(EnumType.STRING)
 	private ShopStatus shopStatus;
+	
+	@JsonProperty
+	public Long getMember() {
+		return member.getMemSeq();
+	}
 
 }
