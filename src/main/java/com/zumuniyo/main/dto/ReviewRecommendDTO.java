@@ -6,6 +6,9 @@ import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,10 +27,16 @@ public class ReviewRecommendDTO {
 
 	@Id
 	@ManyToOne
+	@JsonIgnore
 	private MemberDTO member;
 	
 	@Id
 	@ManyToOne
 	private ReviewDTO review;
+	
+	@JsonProperty
+	public Long getMember() {
+		return member.getMemSeq();
+	}
 
 }
