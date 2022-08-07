@@ -52,9 +52,9 @@ public class NoticeBoardDTO {
 	private String content;
 	
 	@ElementCollection(targetClass=String.class)
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "noticeNo") 
-	private List<NoticeAttachment> images;	
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//	@JoinColumn(name = "noticeNo") 
+	private List<String> images;	
 	
 	private boolean boardTop;
 	 
