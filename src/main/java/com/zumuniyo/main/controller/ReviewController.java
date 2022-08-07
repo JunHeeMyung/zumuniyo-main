@@ -2,7 +2,9 @@ package com.zumuniyo.main.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -277,5 +279,14 @@ public class ReviewController {
 		System.out.println("memList: " + shopList);
 		return shopList;
 	}
-
+	
+	@GetMapping("/reviewDayCount")
+	public List<Map<String, Integer>> reviewDayCount(){
+		List<Map<String, Integer>> reviewCount = reviewRepo.selectReviewCountDay();
+		System.out.println("reviewCount : " +reviewCount);
+		
+		
+		
+		return reviewCount;		
+	}
 }

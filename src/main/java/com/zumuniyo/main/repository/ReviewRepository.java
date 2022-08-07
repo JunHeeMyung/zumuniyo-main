@@ -1,6 +1,7 @@
 package com.zumuniyo.main.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -62,6 +63,13 @@ public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,P
 			+ "where menu_seq = ?1\r\n", nativeQuery = true)
 	int selectByMenuRaty(Long bno);
 	
+	@Query(value="select to_char(b.dt, 'yyyy-mm-dd') as review_regdate, nvl(sum(a.cnt), 0) cnt\r\n"
+			+ "from ( select to_char(review_regdate, 'yyyy-mm-dd') as review_regdate , count(*) cnt\r\n"
+			+ "from review  where review_regdate between to_date('2022-07-08', 'yyyy-mm-dd')  and to_date('2022-08-12', 'yyyy-mm-dd') \r\n"
+			+ "group by review_regdate ) a , ( select to_date('2022-07-08', 'yyyy-mm-dd') + level - 1 as dt from dual \r\n"
+			+ "connect by level <= (to_date('2022-08-12', 'yyyy-mm-dd')  - to_date('2022-07-08', 'yyyy-mm-dd') + 1) ) b  \r\n"
+			+ "where b.dt = a.review_regdate(+) group by b.dt order by b.dt", nativeQuery = true)
+	List<Map<String, Integer>> selectReviewCountDay();
 	
 	
 	
