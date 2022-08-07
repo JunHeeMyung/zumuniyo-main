@@ -1,8 +1,10 @@
 package com.zumuniyo.main.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zumuniyo.main.dto.MemberDTO;
+import com.zumuniyo.main.util.QRCodeUtil;
 
 import lombok.extern.java.Log;
 
@@ -100,4 +105,29 @@ public class ImageController {
 		}
 	}
 	
+	@GetMapping(value ="/qrcode/**")
+	public void getQRCode(HttpServletRequest request,HttpServletResponse response){
+		
+		String url = request.getRequestURI().split("/qrcode/")[1];
+		
+		try {
+			if(url!=null && !url.equals("")) {
+				response.setContentType("image/png");
+				BufferedImage qrCode = new QRCodeUtil().createQRCode(url);
+				ImageIO.write(qrCode, "png", response.getOutputStream());
+			}else {
+				response.setContentType("text/html;charset=UTF-8");
+				response.setCharacterEncoding("UTF-8");
+				PrintWriter out = response.getWriter();
+				out.write("URL을 다시 확인해주세요");
+			}
+		}catch(Exception e) {
+			log.info("[QR생성오류]");
+			System.out.println(e);
+			return;
+		}
+
+		return ;
+	}
+
 }
