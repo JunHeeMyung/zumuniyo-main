@@ -1,7 +1,6 @@
 package com.zumuniyo.main.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,5 +17,9 @@ public interface MenuCategoryRepository extends QuerydslPredicateExecutor<MenuCa
 	
 	List<MenuCategoryDTO> findByShopAndMenuCategoryOrderNotOrderByMenuCategoryOrderAsc(ShopDTO shop, int order);
 	
+	List<MenuCategoryDTO> findByShop(ShopDTO shop);
 	
+	List<MenuCategoryDTO> findByShopAndMenuCategoryOrder(ShopDTO shop, int order);
+	
+	List<MenuCategoryDTO> findByShopAndMenuCategoryOrderGreaterThan(ShopDTO shop, int order);
 }

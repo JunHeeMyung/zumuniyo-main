@@ -99,7 +99,7 @@ public class MenuTest {
 		
 		Long cno = 63L;
 		
-		ShopDTO shop = ShopDTO.builder().shopSeq(4882L).build();
+		ShopDTO shop = ShopDTO.builder().shopSeq(4883L).build();
 		
 		menuCategoryRepository.findByShopAndMenuCategoryName(shop, "카테고리없음").forEach(i -> {
 
@@ -186,7 +186,7 @@ public class MenuTest {
 		
 		//menuRepository.findByMenuStatusNot(MenuStatus.비활성).forEach(System.out::println);
 		
-		menuRepository.findByShopAndMenuStatusNot(shop, MenuStatus.비활성).forEach(System.out::println);
+		menuRepository.findByShopAndMenuStatusNotOrderByMenuSeqDesc(shop, MenuStatus.비활성).forEach(System.out::println);
 		
 		
 		System.out.println("===========================end=============================");
@@ -254,6 +254,8 @@ public class MenuTest {
 		}, ()->{System.out.println("해당 메뉴아이디가 존재하지 않습니다.");});
 		
 	}
+	
+	
 	
 	
 	

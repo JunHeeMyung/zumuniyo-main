@@ -17,7 +17,7 @@ public interface MenuRepository extends QuerydslPredicateExecutor<MenuDTO>,Pagin
 	
 	//List<MenuDTO> findByMenuStatusNot(MenuStatus menuStatus);
 	
-	List<MenuDTO> findByShopAndMenuStatusNot(ShopDTO shop, MenuStatus menuStatus);
+	List<MenuDTO> findByShopAndMenuStatusNotOrderByMenuSeqDesc(ShopDTO shop, MenuStatus menuStatus);
 	
 	Page<MenuDTO> findByMenuStatusNot(MenuStatus menuStatus,Pageable p);
 	
@@ -28,6 +28,7 @@ public interface MenuRepository extends QuerydslPredicateExecutor<MenuDTO>,Pagin
 	List<MenuDTO> findByShopAndMenuNameContaining(ShopDTO shop, String name);
 	
 	List<MenuDTO> findByMenuNameContaining(String name);
+	
 	
 	
 }
