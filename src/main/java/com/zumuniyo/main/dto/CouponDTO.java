@@ -35,6 +35,8 @@ public class CouponDTO {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long couponSeq;
 	
+	private String couponName;
+	
 	@ManyToOne
 	@JsonIgnore
 	private MemberDTO member;

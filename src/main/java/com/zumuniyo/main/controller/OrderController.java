@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zumuniyo.main.dto.MemberDTO;
+import com.zumuniyo.main.dto.MenuStatus;
 import com.zumuniyo.main.dto.OrderDTO;
 import com.zumuniyo.main.dto.OrderGroupDTO;
 import com.zumuniyo.main.dto.OrderStatus;
@@ -51,22 +52,48 @@ public class OrderController {
 	List<OrderDTO> validOrderList; 
 	List<OrderDTO> orderList;
 	OrderGroupDTO orderGroup;
+	int totalPrice;
+	MemberDTO loginedMember;
 	
+	@GetMapping("/orderlist")
+	public List<OrderGroupDTO> getOrderGroupList (HttpServletRequest request){
+		
+		/* 로그인정보확인 */
+		loginedMember=null;
+		if(request.getSession().getAttribute("member")==null)return null;
+		loginedMember = ((MemberDTO)request.getSession().getAttribute("member"));
+		
+		return orderGroupRepository.findByMemberOrderByOrderGroupRegdateDesc(loginedMember);
+		
+	}
 	
-	
-	@GetMapping("/orderlist/{orderSeq}")
-	public List<OrderDTO> getOrderList (@PathVariable Long orderSeq
+	@GetMapping("/orderlist/{orderGroupSeq}")
+	public List<OrderDTO> getOrderList (@PathVariable Long orderGroupSeq
 			,HttpServletRequest request){
 		
 		orderList=null;
-		if(orderSeq==null) return null;
+		if(orderGroupSeq==null) return null;
 		
-		orderGroupRepository.findById(orderSeq).ifPresent(orderGroup->{
+		orderGroupRepository.findById(orderGroupSeq).ifPresent(orderGroup->{
 			orderList = orderRepository.findByOrderGroup(orderGroup);
 		});
 
 		return orderList;
 	}
+	
+	@GetMapping("/ordergroup/{orderGroupSeq}")
+	public OrderGroupDTO getOrderGroup (@PathVariable Long orderGroupSeq
+			,HttpServletRequest request){
+		
+		orderGroup = null;
+		if(orderGroupSeq==null) return null;
+		orderGroupRepository.findById(orderGroupSeq).ifPresent(_orderGroup->{
+			orderGroup=_orderGroup;
+		});
+		
+		return orderGroup;
+	}
+	
 	
 	@PostMapping("/orderlist")
 	public String order(	@RequestParam(defaultValue = "0") Integer tableNum ,
@@ -80,10 +107,11 @@ public class OrderController {
 				+ "orderList: "+inputOrderList+"/"
 				+ "couponSeq: "+couponSeq);
 		
+		
+		
 		/* 입력검증 */
 		LinkedHashMap<Long,Integer> orderList = new LinkedHashMap<Long,Integer>();
-		try {
-		
+		try {			
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonObject =  (JSONObject)jsonParser.parse(inputOrderList);
 			for(Object key :jsonObject.keySet()) {
@@ -102,23 +130,40 @@ public class OrderController {
 		if(request.getSession().getAttribute("member")==null) return "로그인 정보가 없습니다";
 		
 		orderResult = "";
-		MemberDTO loginedMember = ((MemberDTO)request.getSession().getAttribute("member"));
 		Timestamp now = new Timestamp(System.currentTimeMillis());
-	
-		if(couponSeq!=0) {
-			/* 쿠폰 유효성검증 */
+		
+		/* 매장 유효성검증 */
+		validShop = null;
+		shopRepository.findById(shopSeq).ifPresentOrElse(shop->{
+				validShop=shop;
+			}, ()->{
+				orderResult = "유효하지 않는 매장입니다";
+			});
+			
+			if(!orderResult.equals("")) {
+				log.info("[주문결과]:"+orderResult);
+				return orderResult;
+		}
+			
+		/* 쿠폰 유효성검증 */
+		if(couponSeq!=0) {			
 			couponRepository.findById(couponSeq).ifPresentOrElse(
 					coupon->{
-						if(!coupon.getMember().equals(loginedMember)) {
+						loginedMember = ((MemberDTO)request.getSession().getAttribute("member"));
+						if(!coupon.getMember().equals(loginedMember.getMemSeq())) {
 							orderResult = "쿠폰 주인이 아닙니다";
 							return;
 						};
-						if(coupon.getCouponExpire().after(now)) {
+						if(coupon.getCouponExpire().before(now)) {
 							orderResult = "사용기간이 지난 쿠폰입니다";
 							return;
 						};
 						if(coupon.getOrderGroup()!=null) {
 							orderResult = "이미 사용된 쿠폰입니다";
+							return;
+						};
+						if(!coupon.getShop().equals(validShop)) {
+							orderResult = "해당매장에서 발급한 쿠폰이 아닙니다";
 							return;
 						};
 					}
@@ -130,31 +175,28 @@ public class OrderController {
 				log.info("[주문결과]:"+orderResult);
 				return orderResult;
 			}
-		}
-		
-		/* 매장 유효성검증 */
-		validShop = null;
-		shopRepository.findById(shopSeq).ifPresentOrElse(shop->{
-			validShop=shop;
-		}, ()->{
-			orderResult = "유효하지 않는 매장입니다";
-		});
-		
-		if(!orderResult.equals("")) {
-			log.info("[주문결과]:"+orderResult);
-			return orderResult;
-		}
+		}	
 		
 		/* 메뉴 유효성 검증*/
 		validOrderList = new ArrayList<OrderDTO>();
+		totalPrice = 0;
 		for(Long key :orderList.keySet()) {
 			menuRepository.findById(key).ifPresentOrElse(
 					menu->{
+						if(!menu.getShop().equals(validShop)) {
+							orderResult = "해당 매장의 메뉴가 아닙니다";
+							return;
+						}
+						if(menu.getMenuStatus()!=MenuStatus.활성) {
+							orderResult = "현재 판매중인 메뉴가 아닙니다";
+							return;
+						}
 						OrderDTO validOrder=OrderDTO.builder()
 								.count(orderList.get(key))
 								.menu(menu)
 								.build();
 						validOrderList.add(validOrder);
+						totalPrice += (menu.getMenuPrice()*((int)orderList.get(key)));
 					}
 					, ()->{
 						orderResult = "유효하지 않는 메뉴입니다";
@@ -164,6 +206,22 @@ public class OrderController {
 		if(orderList.size()!=validOrderList.size()) {
 			log.info("[주문결과]:"+orderResult);
 			return orderResult;
+		}
+		
+		/* 쿠폰 사용가격 및 쿠폰사용 */
+		if(couponSeq!=0) {
+			couponRepository.findById(couponSeq).ifPresent(coupon->{
+				if(coupon.getCouponMinCond()>totalPrice) {
+					orderResult = "총액이 최소 쿠폰 사용금액보다 작습니다";
+					return;
+				}
+				if((totalPrice-coupon.getCouponDC())<0) {
+					orderResult = "0원 미만은 사용불가입니다";
+					return;
+				}
+				coupon.setOrderGroup(orderGroup);
+				couponRepository.save(coupon);
+			});
 		}
 		
 		/* 오더그룹생성 */
@@ -181,16 +239,13 @@ public class OrderController {
 			orderRepository.save(validOrder);
 		});
 		
-		/* 쿠폰사용 */
-		if(couponSeq!=0) {
-			couponRepository.findById(couponSeq).ifPresent(coupon->{
-				coupon.setOrderGroup(orderGroup);
-				couponRepository.save(coupon);
-			});
+		if(!orderResult.equals("")) {
+			log.info("[주문결과]:"+orderResult);
+			return orderResult;
 		}
-	
+		
+		log.info("[주문성공]:"+orderGroup.getOrderGroupSeq());
+
 		return "주문성공:"+orderGroup.getOrderGroupSeq();
 	}
-	
-
 }
