@@ -11,6 +11,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +35,10 @@ public class CouponDTO {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long couponSeq;
 	
+	private String couponName;
+	
 	@ManyToOne
+	@JsonIgnore
 	private MemberDTO member;
 	
 	@ManyToOne
@@ -48,5 +54,10 @@ public class CouponDTO {
 	
 	@ManyToOne
 	private OrderGroupDTO orderGroup;
+	
+	@JsonProperty
+	public Long getMember() {
+		return member.getMemSeq();
+	}
 	
 }

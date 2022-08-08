@@ -1,7 +1,9 @@
 package com.zumuniyo.main.dto;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -10,8 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +41,7 @@ public class ReviewDTO {
 	private Long reviewSeq;
 	
 	@ManyToOne
+	@JsonIgnore
 	private MemberDTO member;
 	
 	@ManyToOne
@@ -53,5 +60,17 @@ public class ReviewDTO {
 	private Timestamp reviewRegdate;
 	
 	private boolean reviewExposure;
+	
+	@Transient
+	@JsonIgnore
+	Map<String,Object> memberJSON;
+	
+	@JsonProperty(value = "member")
+	public Map<String,Object> getMember() {
+		memberJSON = new HashMap<String,Object>();
+		memberJSON.put("memSeq", member.getMemSeq());
+		memberJSON.put("memNick", member.getMemNick());
+		return memberJSON;
+	}
 
 }
