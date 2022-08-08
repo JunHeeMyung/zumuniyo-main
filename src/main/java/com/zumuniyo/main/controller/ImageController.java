@@ -56,7 +56,7 @@ public class ImageController {
 				String newImageName = date+random+memberSeq+(extension.equals("")?"":".")+extension;
 				
 				String rootPath = System.getProperty("user.dir");
-				Path DIR = Paths.get(rootPath+"\\image");
+				Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
 				Files.createDirectories(DIR);
 				Path imagePath = DIR.resolve(newImageName).normalize();
 				if(Files.exists(imagePath)) return null;			
@@ -81,7 +81,7 @@ public class ImageController {
 		try {
 			
 			String rootPath = System.getProperty("user.dir");
-			Path DIR = Paths.get(rootPath+"\\image");
+			Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
 			Path imagePath = DIR.resolve(imageName).normalize();
 			if(!Files.exists(imagePath)) return null;
 			
