@@ -51,7 +51,7 @@ public class ShopDTO {
 	private MemberDTO member;
 	
 	@Enumerated(EnumType.STRING)
-	private ShopCategory shopCategory;
+	private  ShopCategory shopCategory;
 	
 	private String shopLogo;
 	
@@ -70,6 +70,7 @@ public class ShopDTO {
 	
 	@JsonProperty
 	public Long getMember() {
+		if(member==null) return 0L;
 		return member.getMemSeq();
 	}
 

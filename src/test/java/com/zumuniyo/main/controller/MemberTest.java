@@ -16,7 +16,7 @@ public class MemberTest {
 	@Autowired
 	MemberRepository memberRepository;
 	
-	@Test
+	//@Test
 	public void register() {
 		
 		
