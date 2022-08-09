@@ -24,7 +24,7 @@ public class ReviewRecommendKey implements Serializable{
 	
 	@JsonProperty
 	public Long getMember() {
-		return member.getMemSeq();
+		return member==null?null:member.getMemSeq();
 	}
 	
 }
