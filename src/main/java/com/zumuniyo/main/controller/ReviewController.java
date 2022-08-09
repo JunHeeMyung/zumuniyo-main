@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zumuniyo.main.dto.MemberDTO;
+import com.zumuniyo.main.dto.Memtype;
 import com.zumuniyo.main.dto.OrderGroupDTO;
 import com.zumuniyo.main.dto.ReviewDTO;
 import com.zumuniyo.main.dto.ShopDTO;
@@ -149,14 +150,28 @@ public class ReviewController {
 
 	// 리뷰 업데이트
 	@PutMapping("/reviewUpdate/{bno}")
-	public void reviewUpdate(@PathVariable Long bno, Boolean bool) {
-		System.out.println("bno :" + bno);
-		System.out.println("bool :"+bool);
+	public String reviewUpdate(@PathVariable Long bno, HttpServletRequest request) {
+		System.out.println("bno :" + bno);		
 
+		MemberDTO semem = (MemberDTO) request.getSession().getAttribute("member");
+		
+		if (semem == null) return "";
+		if( semem.getMemType() != Memtype.사업자회원) return ""; 				
 		ReviewDTO reviewUpdate = reviewRepo.findById(bno).get();
+		
+		
+//		reviewUpdate.getOrderGroup().getShop().getShopSeq()
+//		if(semem.getMemType() != reviewUpdate.getMember().get("memSeq")) return;
+		
+		
+		Boolean bool = reviewUpdate.isReviewExposure();
+		System.out.println("bool1 :"+bool);
+		if(bool) bool=false; else bool=true;	
 		reviewUpdate.setReviewExposure(bool);
+		System.out.println("bool2 :"+bool);
+		
 		System.out.println(reviewUpdate);
-		reviewRepo.save(reviewUpdate);
+		if(reviewRepo.save(reviewUpdate)!=null)return"성공"; else return"실패";
 	}
 
 	// 리뷰 삭제(로그인한 본인 것만)
