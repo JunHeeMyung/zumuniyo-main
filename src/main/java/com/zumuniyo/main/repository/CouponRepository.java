@@ -65,5 +65,5 @@ public interface CouponRepository extends QuerydslPredicateExecutor<CouponDTO>,P
 	
 	List<CouponDTO> findByCouponDCAndCouponMinCondAndCouponExpireAndCouponNameAndShopAndMember(int couponDC,int couponMinCond,Timestamp couponExpire,String couponName,ShopDTO shop,MemberDTO member);
 	
-	
+	List<CouponDTO> findByMemberAndShopAndOrderGroupIsNullAndCouponExpireGreaterThanOrderByCouponExpireDesc(MemberDTO member,ShopDTO shop,Timestamp now);
 }

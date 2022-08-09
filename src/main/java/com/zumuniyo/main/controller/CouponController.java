@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zumuniyo.main.dto.CouponDTO;
 import com.zumuniyo.main.dto.MemberDTO;
+import com.zumuniyo.main.dto.OrderDTO;
 import com.zumuniyo.main.dto.ShopDTO;
 import com.zumuniyo.main.repository.CouponRepository;
 import com.zumuniyo.main.repository.OrderGroupRepository;
@@ -198,6 +199,22 @@ public class CouponController {
 		
 		return "쿠폰이 발급되었습니다";
 		
+	}
+	
+	/* 매장 쿠폰 선택용 */
+	@GetMapping("/mycoupon/{shopSeq}")
+	List<CouponDTO> getShopMyCouponList(@PathVariable Long shopSeq,
+			HttpServletRequest request){
+		
+		MemberDTO loginedMember = ((MemberDTO)request.getSession().getAttribute("member"));
+		if(loginedMember==null) return null;
+		
+		shopDTO=null;
+		shopRepository.findById(shopSeq).ifPresent(shop->{shopDTO=shop;});
+		if(shopDTO==null) return null;
+		
+		Timestamp now = new Timestamp((new Date().getTime()));
+		return couponRepository.findByMemberAndShopAndOrderGroupIsNullAndCouponExpireGreaterThanOrderByCouponExpireDesc(loginedMember, shopDTO, now);
 	}
 	
 	
