@@ -36,7 +36,7 @@ public class ReviewRecommendDTO {
 	
 	@JsonProperty
 	public Long getMember() {
-		return member.getMemSeq();
+		return member==null?null:member.getMemSeq();
 	}
 
 }
