@@ -27,6 +27,7 @@ public class CouponController {
 	List<CouponDTO> couponListDTO;
 	CouponDTO couponDTO;
 	
+	/* 쿠폰사용여부 확인용 */ 
 	@GetMapping("/usedcoupon/{orderGroupSeq}")
 	public CouponDTO getUsedCoupon(@PathVariable Long orderGroupSeq){
 		
