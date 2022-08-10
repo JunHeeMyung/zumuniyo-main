@@ -29,6 +29,6 @@ public interface MenuRepository extends QuerydslPredicateExecutor<MenuDTO>,Pagin
 	
 	List<MenuDTO> findByMenuNameContaining(String name);
 	
-	
+	List<MenuDTO> findByShopAndMenuTopAndMenuStatusNotOrderByMenuSeqAsc(ShopDTO shop, boolean menuTop, MenuStatus menuStatus);
 	
 }

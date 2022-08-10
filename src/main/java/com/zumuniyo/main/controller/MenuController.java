@@ -54,7 +54,6 @@ public class MenuController {
 	List<MenuDTO> menuLst;
 	
 	
-	
 	@GetMapping("/heartbeat")
 	public String heartbeat() {
 		return "heartbeat:menu";
@@ -127,6 +126,24 @@ public class MenuController {
 		});
 		return menuCategoryList;
 	}
+	
+	
+	// 특정매장의 추천메뉴만 전부 찾기
+	@GetMapping("/menutopview/{shopseq}")
+	public List<MenuDTO> menuSelectByTop(@PathVariable Long shopseq) {
+		
+		List<MenuDTO> menuListByTop = new ArrayList<>(); 
+		shopRepository.findById(shopseq).ifPresent(shop->{
+			menuRepository.findByShopAndMenuTopAndMenuStatusNotOrderByMenuSeqAsc(shop, true, MenuStatus.비활성).forEach(toplist->{
+			
+				menuListByTop.add(toplist);
+			});
+		
+		});
+		return menuListByTop;
+	}
+	
+	
 	
 	
 	
