@@ -1,8 +1,10 @@
 package com.zumuniyo.main.controller;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +29,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.querydsl.core.types.Predicate;
 import com.zumuniyo.main.dto.AdvertisementDTO;
-import com.zumuniyo.main.dto.NoticeBoardDTO;
 import com.zumuniyo.main.dto.PageMaker;
 import com.zumuniyo.main.dto.PageVO;
 import com.zumuniyo.main.repository.AdvertisementRepository;
@@ -67,12 +68,13 @@ public class AdvertisementController {
 	
 	
 	@PostMapping("/advertisementUpdate")
-	public String modifyPost(PageVO pageVO, @RequestBody AdvertisementDTO advertisement) {
+	public String modifyPost(@RequestBody AdvertisementDTO advertisement) {
 		System.out.println("보드입니다:"+advertisement);
 		advertisementRepository.findById(advertisement.getAdSeq()).ifPresentOrElse(original->{
 			original.setOwner(advertisement.getOwner());
 			original.setEndTime(advertisement.getEndTime());
 			original.setStartTime(advertisement.getStartTime());
+			original.setImage(advertisement.getImage());
 			AdvertisementDTO updateAdvertisement= advertisementRepository.save(original);
 		}, ()->{System.out.println("수정할 데이터없음");});
 		
@@ -84,12 +86,17 @@ public class AdvertisementController {
 	public String registerPost(@RequestParam(defaultValue = "") String owner,
 								@RequestParam(defaultValue = "0") String endTime,
 								@RequestParam(defaultValue = "0") String startTime,
+								@RequestParam String image,
 								RedirectAttributes attr) {
-		
+		System.out.println("endtime:"+ endTime);
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+SSSS"); 
+//		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+//		String time = dateFormat.parse(mCreatedTime).toString();
 		AdvertisementDTO ad = AdvertisementDTO.builder()
-				.endTime(Timestamp.valueOf(endTime+" 00:00:00.000"))
+				.endTime(Timestamp.valueOf(startTime+" 00:00:00.000"))
 				.startTime(Timestamp.valueOf(startTime+" 00:00:00.000"))
 				.owner(owner)
+				.image(image)
 				.build();
 		
 		advertisementRepository.save(ad);
