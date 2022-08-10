@@ -119,7 +119,7 @@ public class MemberController {
 		registerResult="";
 		
 		/* 입력검증 */
-		if(m.getMemEmail()==null||m.getMemEmail()=="") return "이메일이 잘못되었습니다";
+		if(m.getMemEmail()==null||m.getMemEmail().equals("")) return "이메일이 잘못되었습니다";
 		
 		/* 기회원 */
 		memberRepository.findByMemEmailAndSocialType(m.getMemEmail(), "naver").ifPresent(member->{
