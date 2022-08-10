@@ -2,6 +2,7 @@ package com.zumuniyo.main.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -130,12 +131,12 @@ public class OrderController {
 		if(request.getSession().getAttribute("member")==null) return "로그인 정보가 없습니다";
 		
 		orderResult = "";
-		Timestamp now = new Timestamp(System.currentTimeMillis());
+		Timestamp now = new Timestamp(new Date().getTime());
 		
 		/* 매장 유효성검증 */
 		validShop = null;
 		shopRepository.findById(shopSeq).ifPresentOrElse(shop->{
-				validShop=shop;
+				validShop=shop;	
 			}, ()->{
 				orderResult = "유효하지 않는 매장입니다";
 			});
