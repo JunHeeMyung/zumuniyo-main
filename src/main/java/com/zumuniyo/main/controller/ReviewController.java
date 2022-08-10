@@ -185,8 +185,7 @@ public class ReviewController {
 			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 			ReviewDTO reviewDelete = reviewRepo.findById(bno).get();
 
-			if (mem.getMemSeq() == reviewDelete.getMember().get("memSeq")) {
-
+			if (mem.getMemSeq().equals(reviewDelete.getMember().get("memSeq"))) {
 				System.out.println("정보일치");
 				reviewRepo.deleteById(bno);
 				return "success";
