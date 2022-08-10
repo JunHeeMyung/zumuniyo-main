@@ -254,24 +254,27 @@ public class ReviewController {
 		return -1;
 	}
 
-	@PostMapping("/memManage")
+	//회원정보 수정
+	@PutMapping("/memManage")
 	public String memManage(MemberDTO newMem, HttpServletRequest request) {
 
-		if (newMem == null) {
-			return "입력 MemberDTO값이 없음";
-		}
-
-		if (request.getSession().getAttribute("member") != null) {
-			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
-			mem.setMemNick(newMem.getMemNick());
-			mem.setMemStatus(newMem.getMemStatus());
-			mem.setMemType(newMem.getMemType());
-			memRepo.save(mem);
-			return "성공";
-		}
-		return "세션의 로그인 정보가 없음";
+		if (newMem == null)	return "입력 MemberDTO값이 없음";
+		MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
+		if (mem==null) return "세션의 로그인 정보가 없음";
+		if(mem.getMemType()!=Memtype.관리자) return "관리자가아닙니다";		
+		if(memRepo.findByMemNick(newMem.getMemNick())!=null) return "닉네임 중복";		
+		
+		MemberDTO orimem = memRepo.findById(newMem.getMemSeq()).get();		
+		
+		orimem.setMemNick(newMem.getMemNick());
+		orimem.setMemStatus(newMem.getMemStatus());
+		orimem.setMemType(newMem.getMemType());
+		
+		if(memRepo.save(orimem)!=null) return "성공";			
+		return"실패";
 	}
 
+	
 	@PostMapping("/memList")
 	public List<MemberDTO> memAllList() {
 		List<MemberDTO> memList = (List<MemberDTO>) memRepo.findAll(Sort.by(Sort.Direction.ASC, "memSeq"));
