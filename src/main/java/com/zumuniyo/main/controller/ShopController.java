@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -102,4 +103,30 @@ public class ShopController {
 		return 	(result==null||result.getShopSeq()==null)?"실패":"성공";
 	}
 
+	@PutMapping("/shopupdate")
+	public String shopupdate(ShopDTO shop, HttpServletRequest request, String locAddr, double locLat, double locLon) {
+		System.out.println("샵업데이트들어옴");
+		System.out.println("샵입력 들어옴" + shop + "---" +  locAddr + locLat + locLon);
+		LocationDTO locationDTO =  LocationDTO.builder()
+				.locAddr(locAddr).locLat(locLat).locLon(locLon)
+				.build();
+		locationRepository.save(locationDTO);
+		
+		System.out.println("locationDTO :"+locationDTO);
+		shop.setLocation(locationDTO);
+		MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
+		if (mem == null) return "로그인 정보가 없습니다";
+		if(mem.getMemType()!= Memtype.사업자회원) return "사업자 회원이 아닙니다";
+		
+		shop.setMember(mem);			
+		shop.setShopStatus(ShopStatus.활성);
+		ShopDTO result = shopRepo.save(shop);
+		
+		System.out.println(shop);
+		System.out.println(result);
+		
+		return 	(result==null||result.getShopSeq()==null)?"실패":"성공";
+	}
+	
+	
 }
