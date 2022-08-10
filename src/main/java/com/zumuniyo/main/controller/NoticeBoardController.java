@@ -52,7 +52,7 @@ public class NoticeBoardController {
 	
 	@RequestMapping(value = "/NoticeUpload.do", method = RequestMethod.POST) //, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public void NoticeUpload(@RequestParam MultipartFile file) throws Exception{
-	String basePath = "C:/Workspaces/reactProject/zumuniyo-react/public/images";//리액트경로->퍼블릭 탐색기 
+	String basePath = "C:/Workspaces/reactProject/zumuniyo-react/public/img";//리액트경로->퍼블릭 탐색기 
 	System.out.println("upload:" + basePath);
 	
 	 
