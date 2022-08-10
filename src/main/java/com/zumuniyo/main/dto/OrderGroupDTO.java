@@ -59,8 +59,8 @@ public class OrderGroupDTO {
 	@JsonProperty(value = "member")
 	public Map<String,Object> getMember() {
 		memberJSON = new HashMap<String,Object>();
-		memberJSON.put("memSeq", member.getMemSeq());
-		memberJSON.put("memNick", member.getMemNick());
+		memberJSON.put("memSeq", member==null?null:member.getMemSeq());
+		memberJSON.put("memNick", member==null?null:member.getMemNick());
 		return memberJSON;
 	}
 
