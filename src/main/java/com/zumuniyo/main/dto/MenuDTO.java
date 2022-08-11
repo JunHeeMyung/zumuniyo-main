@@ -19,7 +19,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"shop","menuCategory"})
 @Table(name="menu")
 @Entity
 @Builder

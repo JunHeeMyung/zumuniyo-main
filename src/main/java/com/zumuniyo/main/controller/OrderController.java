@@ -2,6 +2,7 @@ package com.zumuniyo.main.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -130,12 +131,12 @@ public class OrderController {
 		if(request.getSession().getAttribute("member")==null) return "로그인 정보가 없습니다";
 		
 		orderResult = "";
-		Timestamp now = new Timestamp(System.currentTimeMillis());
+		Timestamp now = new Timestamp(new Date().getTime());
 		
 		/* 매장 유효성검증 */
 		validShop = null;
 		shopRepository.findById(shopSeq).ifPresentOrElse(shop->{
-				validShop=shop;
+				validShop=shop;	
 			}, ()->{
 				orderResult = "유효하지 않는 매장입니다";
 			});
@@ -208,21 +209,26 @@ public class OrderController {
 			return orderResult;
 		}
 		
-		/* 쿠폰 사용가격 및 쿠폰사용 */
+		/* 쿠폰 조건체크 */
 		if(couponSeq!=0) {
 			couponRepository.findById(couponSeq).ifPresent(coupon->{
 				if(coupon.getCouponMinCond()>totalPrice) {
 					orderResult = "총액이 최소 쿠폰 사용금액보다 작습니다";
-					return;
+					return ;
 				}
 				if((totalPrice-coupon.getCouponDC())<0) {
 					orderResult = "0원 미만은 사용불가입니다";
 					return;
 				}
-				coupon.setOrderGroup(orderGroup);
-				couponRepository.save(coupon);
+
 			});
 		}
+		
+		if(!orderResult.equals("")) {
+			log.info("[주문결과]:"+orderResult);
+			return orderResult;
+		}
+		
 		
 		/* 오더그룹생성 */
 		orderGroup = OrderGroupDTO.builder()
@@ -238,6 +244,15 @@ public class OrderController {
 			validOrder.setOrderGroup(orderGroup);
 			orderRepository.save(validOrder);
 		});
+		
+		/* 쿠폰 사용 */
+		if(couponSeq!=0) {
+			couponRepository.findById(couponSeq).ifPresent(coupon->{
+				coupon.setOrderGroup(orderGroup);
+				couponRepository.save(coupon);
+			});
+		}
+
 		
 		if(!orderResult.equals("")) {
 			log.info("[주문결과]:"+orderResult);
