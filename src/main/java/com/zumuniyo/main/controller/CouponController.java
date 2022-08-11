@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zumuniyo.main.dto.CouponDTO;
 import com.zumuniyo.main.dto.MemberDTO;
-import com.zumuniyo.main.dto.OrderDTO;
 import com.zumuniyo.main.dto.ShopDTO;
 import com.zumuniyo.main.repository.CouponRepository;
 import com.zumuniyo.main.repository.OrderGroupRepository;
