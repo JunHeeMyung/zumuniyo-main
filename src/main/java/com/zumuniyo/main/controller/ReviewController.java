@@ -190,7 +190,8 @@ public class ReviewController {
 		System.out.println("요청들어옴");
 
 		UUID uuid = UUID.randomUUID();
-		String filename = uuid.toString() + "_" + file.getOriginalFilename();
+//		String filename = uuid.toString() + "_" + file.getOriginalFilename();
+		String filename = uuid.toString();
 
 		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
 		String filePath = basePath + "/" + filename;
