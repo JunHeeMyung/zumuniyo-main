@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zumuniyo.main.dto.MemberDTO;
+import com.zumuniyo.main.dto.ShopDTO;
 import com.zumuniyo.main.repository.CommonRepository;
+import com.zumuniyo.main.repository.ShopRepository;
 
 @RestController
 @RequestMapping("/main")
@@ -22,6 +25,9 @@ public class MainController {
 	
 	@Autowired
 	CommonRepository commonRepository;
+	
+	@Autowired
+	ShopRepository shopRepository;
 	
 	@GetMapping("/heartbeat")
 	public String heartbeat() {
@@ -32,6 +38,16 @@ public class MainController {
 	public List<Map<String,Object>> getShopMapData() {
 		return commonRepository.getShopMapData();
 	}
+	
+	@GetMapping("/manager")
+	public List<ShopDTO> getShopListForManager(HttpServletRequest request){
+		
+		MemberDTO loginedMember = ((MemberDTO)request.getSession().getAttribute("member"));
+		if(loginedMember==null) return null;
+		
+		return shopRepository.findByMemberOrderByShopSeqDesc(loginedMember);
+	}
+	
 	
 	@GetMapping("/")
 	public String gettest(@RequestParam(defaultValue = "get:id없음") String id,

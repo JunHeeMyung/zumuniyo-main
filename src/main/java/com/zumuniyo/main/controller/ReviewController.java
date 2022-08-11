@@ -82,7 +82,7 @@ public class ReviewController {
 	@GetMapping("/reviewShopList/{shopseq}")
 	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {
 		System.out.println("shopseq :" + shopseq);
-		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShop(shopseq);
+		List<ReviewDTO> reviewList = reviewRepo.selectAllByShop(shopseq);
 		System.out.println("reviewList :" + reviewList);
 		return reviewList;
 	}
