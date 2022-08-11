@@ -1,6 +1,7 @@
 package com.zumuniyo.main.controller;
 
 import java.io.File;
+import java.lang.management.MemoryType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -181,21 +182,17 @@ public class ReviewController {
 
 		System.out.println("삭제요청옴");
 
-		if (request.getSession().getAttribute("member") != null) {
-			MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
-			ReviewDTO reviewDelete = reviewRepo.findById(bno).get();
-
-			if (mem.getMemSeq() == reviewDelete.getMember().get("memSeq")) {
-
-				System.out.println("정보일치");
-				reviewRepo.deleteById(bno);
-				return "success";
-			} else {
-				System.out.println("불일치");
-				return "fail";
-			}
-		}
-		return "fail";
+		MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
+		if (mem == null) return "로그인이 필요합니다";
+			
+		ReviewDTO reviewDelete = reviewRepo.findById(bno).get();
+		if (mem.getMemSeq().equals(reviewDelete.getMember().get("memSeq"))|| mem.getMemType().equals(Memtype.관리자)){ 			
+			System.out.println("정보일치");
+			reviewRepo.deleteById(bno);
+			return "success";
+		}else {
+			return "권한없음";
+		}		
 	}
 
 	// 이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
@@ -255,22 +252,25 @@ public class ReviewController {
 	}
 
 	//회원정보 수정
-	@PutMapping("/memManage")
-	public String memManage(MemberDTO newMem, HttpServletRequest request) {
+	@PutMapping("/memmanage/{memseq}")
+	public String memManage(@PathVariable Long memseq, @RequestBody MemberDTO newMem, HttpServletRequest request) {
 
+		System.out.println("회원정보관리 들어옴");
 		if (newMem == null)	return "입력 MemberDTO값이 없음";
 		MemberDTO mem = (MemberDTO) request.getSession().getAttribute("member");
 		if (mem==null) return "세션의 로그인 정보가 없음";
 		if(mem.getMemType()!=Memtype.관리자) return "관리자가아닙니다";		
-		if(memRepo.findByMemNick(newMem.getMemNick())!=null) return "닉네임 중복";		
+//		if(memRepo.findByMemNick(newMem.getMemNick())!=null) return "닉네임 중복";		
 		
+		
+		newMem.setMemSeq(memseq);
+		System.out.println("newMem : "+newMem);		
 		MemberDTO orimem = memRepo.findById(newMem.getMemSeq()).get();		
+		if(newMem.getMemNick()!=null) {orimem.setMemNick(newMem.getMemNick());}
+		if(newMem.getMemStatus()!=null) {orimem.setMemStatus(newMem.getMemStatus());} 
+		if(newMem.getMemType()!=null) {orimem.setMemType(newMem.getMemType());} 
 		
-		orimem.setMemNick(newMem.getMemNick());
-		orimem.setMemStatus(newMem.getMemStatus());
-		orimem.setMemType(newMem.getMemType());
-		
-		if(memRepo.save(orimem)!=null) return "성공";			
+		if(memRepo.save(orimem)!=null) {System.out.println("성공");return "성공";	}		
 		return"실패";
 	}
 
