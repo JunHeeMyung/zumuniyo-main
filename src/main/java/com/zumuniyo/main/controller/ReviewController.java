@@ -1,21 +1,13 @@
 package com.zumuniyo.main.controller;
 
 import java.io.File;
-import java.lang.management.MemoryType;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.filechooser.FileSystemView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,17 +16,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.zumuniyo.main.dto.MemberDTO;
 import com.zumuniyo.main.dto.Memtype;
 import com.zumuniyo.main.dto.OrderGroupDTO;
 import com.zumuniyo.main.dto.ReviewDTO;
 import com.zumuniyo.main.dto.ShopDTO;
 import com.zumuniyo.main.repository.MemberRepository;
-import com.zumuniyo.main.repository.MenuRepository;
 import com.zumuniyo.main.repository.OrderGroupRepository;
 import com.zumuniyo.main.repository.ReviewRepository;
 import com.zumuniyo.main.repository.ShopRepository;

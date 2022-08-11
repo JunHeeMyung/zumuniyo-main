@@ -56,7 +56,7 @@ public class ImageController {
 				String newImageName = date+random+memberSeq+(extension.equals("")?"":".")+extension;
 				
 				String rootPath = System.getProperty("user.dir");
-				Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
+                Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
 				Files.createDirectories(DIR);
 				Path imagePath = DIR.resolve(newImageName).normalize();
 				if(Files.exists(imagePath)) return null;			
@@ -81,7 +81,7 @@ public class ImageController {
 		try {
 			
 			String rootPath = System.getProperty("user.dir");
-			Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
+            Path DIR = Paths.get(rootPath+"\\src\\main\\resources\\static\\image");
 			Path imagePath = DIR.resolve(imageName).normalize();
 			if(!Files.exists(imagePath)) return null;
 			
@@ -105,29 +105,29 @@ public class ImageController {
 		}
 	}
 	
-	@GetMapping(value ="/qrcode/**")
-	public void getQRCode(HttpServletRequest request,HttpServletResponse response){
-		
-		String url = request.getRequestURI().split("/qrcode/")[1];
-		
-		try {
-			if(url!=null && !url.equals("")) {
-				response.setContentType("image/png");
-				BufferedImage qrCode = new QRCodeUtil().createQRCode(url);
-				ImageIO.write(qrCode, "png", response.getOutputStream());
-			}else {
-				response.setContentType("text/html;charset=UTF-8");
-				response.setCharacterEncoding("UTF-8");
-				PrintWriter out = response.getWriter();
-				out.write("URL을 다시 확인해주세요");
-			}
-		}catch(Exception e) {
-			log.info("[QR생성오류]");
-			System.out.println(e);
-			return;
-		}
+    @GetMapping(value ="/qrcode/**")
+    public void getQRCode(HttpServletRequest request,HttpServletResponse response){
+        
+        String url = request.getRequestURI().split("/qrcode/")[1];
+        
+        try {
+            if(url!=null && !url.equals("")) {
+                response.setContentType("image/png");
+                BufferedImage qrCode = new QRCodeUtil().createQRCode(url);
+                ImageIO.write(qrCode, "png", response.getOutputStream());
+            }else {
+                response.setContentType("text/html;charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.write("URL을 다시 확인해주세요");
+            }
+        }catch(Exception e) {
+            log.info("[QR생성오류]");
+            System.out.println(e);
+            return;
+        }
 
-		return ;
-	}
-
+        return ;
+    }
+	
 }
