@@ -120,7 +120,7 @@ public class CouponController {
 	}
 	
 	/* 아직배포안된쿠폰만삭제 */
-	@DeleteMapping("/list")
+	@DeleteMapping("/unused")
 	public String deleteUnusedCoupon(  @RequestParam(defaultValue = "") String couponName,
 									   @RequestParam(defaultValue = "0") Long shopSeq,
 									   @RequestParam(defaultValue = "-1") Integer couponMinCond,
@@ -128,7 +128,12 @@ public class CouponController {
 									   @RequestParam(defaultValue = "") String couponExpire,
 										HttpServletRequest request) {
 		
-		/* 입력값 검증 */
+		if(couponName.equals("")) return "쿠폰이름이 없습니다";
+		if(shopSeq==0) return "매장이 없습니다";
+		if(couponMinCond==-1) return "사용가능금액이 없습니다";
+		if(couponDC==-1) return "할인액이 없습니다";
+		if(couponExpire.equals("")) return "유효기간이 없습니다";
+
 		ZonedDateTime zonedCouponExpire = ZonedDateTime.parse(couponExpire+"+09:00");
 		Timestamp timeStampCouponExpire = Timestamp.valueOf(zonedCouponExpire.toLocalDateTime());
 		
