@@ -131,7 +131,8 @@ public class ShopController {
 			@RequestParam(defaultValue = "") String shopStatus
 			) {
 		
-		/*
+		System.out.println("업데이트 들어옴");
+//		/*
 		System.out.println("shopSeq: "+shopSeq);
 		System.out.println("shopName: "+shopName);
 		System.out.println("locAddr: "+locAddr);
@@ -147,7 +148,8 @@ public class ShopController {
 		System.out.println("shopDetail: "+shopDetail);
 		System.out.println("shopRegdate: "+shopRegdate);
 		System.out.println("shopStatus: "+shopStatus);
-		*/
+//		*/
+		
 		
 		double d_locLat = Double.parseDouble(locLat);
 		double d_locLon = Double.parseDouble(locLon);
@@ -156,6 +158,8 @@ public class ShopController {
 		ShopStatus ss = ShopStatus.valueOf(shopStatus);
 		Timestamp sr = Timestamp.valueOf(shopRegdate.replace("T", " ").substring(0, 22));
 		
+	
+		
 		LocationDTO locationDTO = locationRepository.findById(locAddr).get();
 		if(locationDTO ==null) {
 				locationDTO =  LocationDTO.builder()
@@ -163,6 +167,7 @@ public class ShopController {
 					.build();
 			locationRepository.save(locationDTO);
 		}
+		
 
 		ShopDTO shopDTO = ShopDTO.builder()
 				.shopSeq(shopSeq).shopName(shopName).location(locationDTO).shopAddrDetail(shopAddrDetail)
@@ -172,7 +177,9 @@ public class ShopController {
 				.shopRegdate(sr).shopStatus(ss)
 				.build();
 
+		
 		ShopDTO result = shopRepo.save(shopDTO);
+		
 
 		return 	(result==null||result.getShopSeq()==null)?"실패":"성공";		
 	}
