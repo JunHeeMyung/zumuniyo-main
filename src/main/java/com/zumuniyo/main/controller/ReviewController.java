@@ -82,7 +82,21 @@ public class ReviewController {
 	@GetMapping("/reviewShopList/{shopseq}")
 	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {
 		System.out.println("shopseq :" + shopseq);
-		List<ReviewDTO> reviewList = reviewRepo.selectAllByShop(shopseq);
+		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShop(shopseq);
+		System.out.println("reviewList :" + reviewList);
+		return reviewList;
+	}
+
+	// 사업자의 샵의 리뷰 조회
+	@GetMapping("/reviewshoplistmem")
+	public List<ReviewDTO> reviewByShopMem(HttpServletRequest request) {
+		
+		MemberDTO semem = (MemberDTO) request.getSession().getAttribute("member");		
+		if (semem == null) return null;
+		if( semem.getMemType() == Memtype.일반회원) return null; 	
+		
+		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.findByMemberOrderByReviewSeqDesc(semem);		
+		
 		System.out.println("reviewList :" + reviewList);
 		return reviewList;
 	}
@@ -190,7 +204,8 @@ public class ReviewController {
 		System.out.println("요청들어옴");
 
 		UUID uuid = UUID.randomUUID();
-		String filename = uuid.toString() + "_" + file.getOriginalFilename();
+//		String filename = uuid.toString() + "_" + file.getOriginalFilename();
+		String filename = uuid.toString();
 
 		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
 		String filePath = basePath + "/" + filename;
@@ -204,27 +219,10 @@ public class ReviewController {
 		return filename;
 	}
 
-//	//이미지 업로드 (개별로 한개씩 처리 후 리스트로 묶어서 입력할때 리뷰에 넣는다
-//	@PostMapping("/upload")
-//	public void reviewImg(@RequestParam MultipartFile file) throws Exception {
-//		System.out.println("요청들어옴");
-////		String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
-//		
-//		System.out.println(file);	
-//		
-//		String basePath = "C:/MSA/3Project/zumuniyo-react/public/img";
-//		String filePath = basePath + "/" + file.getOriginalFilename();
-//		
-//		File dest = new File(filePath);
-//		
-//		file.transferTo(dest); // 파일 업로드 작업 수행
-//		
-//		//저장되는 경로를 맞춤 리액트의 public에 폴더 img
-//		String filePath2 = "img/"+ file.getOriginalFilename();		
-//		imgs.add(filePath2);
-//	}
-
-	// 마이페이지, 관리자등 리뷰 이외 test용
+	
+	
+	
+	
 
 	@PostMapping("/nickchange/{newNick}")
 	public int nickchange(@PathVariable String newNick, HttpServletRequest request) {

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import com.zumuniyo.main.dto.MemberDTO;
 import com.zumuniyo.main.dto.ReviewDTO;
 
 public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,PagingAndSortingRepository<ReviewDTO, Long>{
@@ -26,6 +27,9 @@ public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,P
 			+ "where shop_shop_seq = ?1 \r\n"
 			+ "order by review_seq desc", nativeQuery = true)
 	List<ReviewDTO> selectAllByShop(Long bno);
+	
+	
+	List<ReviewDTO> findByMemberOrderByReviewSeqDesc(MemberDTO member);
 	
 	//메뉴의 리뷰
 	@Query(value="select review.* from review \r\n"
@@ -65,9 +69,9 @@ public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,P
 	
 	@Query(value="select to_char(b.dt, 'yyyy-mm-dd') as review_regdate, nvl(sum(a.cnt), 0) cnt\r\n"
 			+ "from ( select to_char(review_regdate, 'yyyy-mm-dd') as review_regdate , count(*) cnt\r\n"
-			+ "from review  where review_regdate between to_date('2022-07-08', 'yyyy-mm-dd')  and to_date('2022-08-12', 'yyyy-mm-dd') \r\n"
+			+ "from review  where review_regdate between to_date('2022-07-08', 'yyyy-mm-dd')  and to_date('2022-08-14', 'yyyy-mm-dd') \r\n"
 			+ "group by review_regdate ) a , ( select to_date('2022-07-08', 'yyyy-mm-dd') + level - 1 as dt from dual \r\n"
-			+ "connect by level <= (to_date('2022-08-12', 'yyyy-mm-dd')  - to_date('2022-07-08', 'yyyy-mm-dd') + 1) ) b  \r\n"
+			+ "connect by level <= (to_date('2022-08-14', 'yyyy-mm-dd')  - to_date('2022-07-08', 'yyyy-mm-dd') + 1) ) b  \r\n"
 			+ "where b.dt = a.review_regdate(+) group by b.dt order by b.dt", nativeQuery = true)
 	List<Map<String, Integer>> selectReviewCountDay();
 	
