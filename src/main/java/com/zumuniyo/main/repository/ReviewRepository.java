@@ -28,8 +28,14 @@ public interface ReviewRepository extends QuerydslPredicateExecutor<ReviewDTO>,P
 			+ "order by review_seq desc", nativeQuery = true)
 	List<ReviewDTO> selectAllByShop(Long bno);
 	
-	
-	List<ReviewDTO> findByMemberOrderByReviewSeqDesc(MemberDTO member);
+	// 	매장 주인의 샵 리뷰	
+	@Query(value ="SELECT r.*\r\n"
+			+ "FROM SHOP \r\n"
+			+ "JOIN ORDERGROUP o ON ( shop.SHOP_SEQ = o.SHOP_SHOP_SEQ)\r\n"
+			+ "JOIN \"MEMBER\" m  ON ( o.MEMBER_MEM_SEQ = m.MEM_SEQ)\r\n"
+			+ "JOIN REVIEW r ON (o.ORDER_GROUP_SEQ = r.ORDER_GROUP_ORDER_GROUP_SEQ)\r\n"
+			+ "WHERE shop.MEMBER_MEM_SEQ = ?1; ", nativeQuery = true)
+	List<ReviewDTO> selectAllByShopMem(Long bno);
 	
 	//메뉴의 리뷰
 	@Query(value="select review.* from review \r\n"
