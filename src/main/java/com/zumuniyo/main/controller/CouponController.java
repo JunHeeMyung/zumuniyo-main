@@ -63,7 +63,7 @@ public class CouponController {
 							   @RequestParam(defaultValue = "0") Long shopSeq,
 							   @RequestParam(defaultValue = "-1") Integer couponMinCond,
 							   @RequestParam(defaultValue = "-1") Integer couponDC,
-							   @RequestParam(defaultValue = "") String couponExpire,
+							   @RequestParam(defaultValue = "") String couponExpire,	
 							   @RequestParam(defaultValue = "0") Integer couponCount,
 							   HttpServletRequest request) {
 		
