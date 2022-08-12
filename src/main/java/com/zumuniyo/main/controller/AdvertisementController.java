@@ -1,10 +1,11 @@
 package com.zumuniyo.main.controller;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -89,18 +90,17 @@ public class AdvertisementController {
 								@RequestParam String image,
 								RedirectAttributes attr) {
 		System.out.println("endtime:"+ endTime);
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+SSSS"); 
-//		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-//		String time = dateFormat.parse(mCreatedTime).toString();
-		AdvertisementDTO ad = AdvertisementDTO.builder()
-				.endTime(Timestamp.valueOf(startTime+" 00:00:00.000"))
-				.startTime(Timestamp.valueOf(startTime+" 00:00:00.000"))
-				.owner(owner)
-				.image(image)
-				.build();
-		
-		advertisementRepository.save(ad);
-		
+	
+			AdvertisementDTO ad = AdvertisementDTO.builder()
+					.endTime(Timestamp.valueOf(endTime))
+					.startTime(Timestamp.valueOf(startTime))
+					.owner(owner)
+					.image(image)
+					.build();
+			System.out.println("endtime2"+endTime);
+			
+			advertisementRepository.save(ad);
+//		
 		
 		//attr.addFlashAttribute("message", insertBoard!=null?"insert success":"insert fail");
 		//return "redirect:/board/boardlist.go";

@@ -14,4 +14,8 @@ public class NoticeBoardService {
 	@Transactional    
 	 public int updateView(Long NoticeBoardSeq) 
 	 {        return boardRepo.updateHitCount(NoticeBoardSeq);    }
+
+
+
+
 }
