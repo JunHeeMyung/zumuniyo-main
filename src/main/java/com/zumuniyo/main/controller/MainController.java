@@ -48,20 +48,20 @@ public class MainController {
 		return shopRepository.findByMemberOrderByShopSeqDesc(loginedMember);
 	}
 	
-	
-	@GetMapping("/")
-	public String gettest(@RequestParam(defaultValue = "get:id없음") String id,
-							@RequestParam(defaultValue = "get:pw없음") String pw,
-							@RequestParam(defaultValue = "get:tel없음") String tel,
-						HttpServletRequest request
-						){
-		
-		System.out.println(id);
-		System.out.println(pw);
-		System.out.println(tel);
-		
-		return "GetMapping수신완료";
-	}
+			
+			@GetMapping("/")
+			public String gettest(@RequestParam(defaultValue = "get:id없음") String id,
+									@RequestParam(defaultValue = "get:pw없음") String pw,
+									@RequestParam(defaultValue = "get:tel없음") String tel,
+								HttpServletRequest request
+								){
+				
+				System.out.println(id);
+				System.out.println(pw);
+				System.out.println(tel);
+				
+				return "GetMapping수신완료";
+			}
 	
 	@PostMapping("/")
 	public String posttest(@RequestParam(defaultValue = "post:id없음") String id,
