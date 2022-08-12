@@ -79,27 +79,27 @@ public class ReviewController {
 	}
 
 	// 샵의 리뷰 조회
-	@GetMapping("/reviewShopList/{shopseq}")
-	public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {
-		System.out.println("shopseq :" + shopseq);
-		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShopMem(shopseq);
-		System.out.println("reviewList :" + reviewList);
-		return reviewList;
-	}
+		@GetMapping("/reviewShopList/{shopseq}")
+		public List<ReviewDTO> reviewByShop(@PathVariable Long shopseq) {
+			System.out.println("shopseq :" + shopseq);
+			List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShop(shopseq);
+			System.out.println("reviewList :" + reviewList);
+			return reviewList;
+		}
 
-	// 사업자의 샵의 리뷰 조회
-	@GetMapping("/reviewshoplistmem")
-	public List<ReviewDTO> reviewByShopMem(HttpServletRequest request) {
-		
-		MemberDTO semem = (MemberDTO) request.getSession().getAttribute("member");		
-		if (semem == null) return null;
-		if( semem.getMemType() == Memtype.일반회원) return null; 	
-		
-		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShopMem(semem.getMemSeq());		
-		
-		System.out.println("reviewList :" + reviewList);
-		return reviewList;
-	}
+//	// 사업자의 샵의 리뷰 조회
+//	@GetMapping("/reviewshoplistmem")
+//	public List<ReviewDTO> reviewByShopMem(HttpServletRequest request) {
+//		
+//		MemberDTO semem = (MemberDTO) request.getSession().getAttribute("member");		
+//		if (semem == null) return null;
+//		if( semem.getMemType() == Memtype.일반회원) return null; 	
+//		
+//		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShopMem(semem.getMemSeq());		
+//		
+//		System.out.println("reviewList :" + reviewList);
+//		return reviewList;
+//	}
 	
 	// 샵의 추천리뷰 조회
 	@GetMapping("/reviewShopExposueList/{shopseq}")
