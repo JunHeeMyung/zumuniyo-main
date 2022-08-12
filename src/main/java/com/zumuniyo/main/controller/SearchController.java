@@ -31,7 +31,7 @@ public class SearchController {
 //		}
 		
 		 
-		
+		//재업로드
 		List<ShopDTO> shopList =searchRepo.findByShopNameContainingOrShopInfoContainingOrShopCategory(keyword, keyword,keyword) ;
 		System.out.println("샵서치:"+ shopList);
 		
