@@ -19,7 +19,7 @@ public class SearchController {
 
 	@Autowired
 	SearchRepository searchRepo;
-	
+	///추가
 	@RequestMapping("/shopsearch")
 	public List<ShopDTO> searchShopResult( String keyword){
 //		ShopCategory shopCategory = null;
