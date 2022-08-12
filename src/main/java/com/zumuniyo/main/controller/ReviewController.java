@@ -95,7 +95,7 @@ public class ReviewController {
 		if (semem == null) return null;
 		if( semem.getMemType() == Memtype.일반회원) return null; 	
 		
-		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.findByMemberOrderByReviewSeqDesc(semem);		
+		List<ReviewDTO> reviewList = (List<ReviewDTO>) reviewRepo.selectAllByShopMem(semem.getMemSeq());		
 		
 		System.out.println("reviewList :" + reviewList);
 		return reviewList;
